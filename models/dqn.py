@@ -27,6 +27,7 @@ class DQN:
 
         # 目标网络
         self.target_q_net = Qnet(state_dim, hidden_dim, self.action_dim).to(device)
+
         # 使用Adam优化器
         self.optimizer = optim.Adam(self.q_net.parameters(), lr=learning_rate)
         self.gamma = gamma  # 折扣因子
@@ -60,6 +61,6 @@ class DQN:
         self.optimizer.step()
 
         if self.count % self.target_update == 0:
-            self.target_q_net.load_state_dict(
-                self.q_net.state_dict())  # 更新目标网络
+            print(f'loss: {dqn_loss.item()}')
+            self.target_q_net.load_state_dict(self.q_net.state_dict())  # 更新目标网络
         self.count += 1

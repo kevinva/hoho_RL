@@ -10,7 +10,7 @@ from utils.replay_buffer import *
 from models.dqn_mp import Qnet, DQNActionSelector, DQNAgent
 
 ENVIRONMENT_NAME = 'CartPole-v1'
-LEARNING_RATE = 2e-3
+LEARNING_RATE = 1e-3
 NUM_EPOCH = 10
 NUM_EPISODES = 100
 HIDDEN_DIM = 128
@@ -20,8 +20,8 @@ TARGET_UPDATE_INTERVAL = 10
 BUFFER_SIZE = 10000
 MINIMAL_SIZE = 500
 BATCH_SIZE = 64
-DEVICE = torch.device('cpu') ##torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # hoho: 使用多进程时，不知为啥在GPU上会模型不能共享更新
-
+# DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # hoho: 使用多进程时，不知为啥在GPU上会模型不能共享更新
+DEVICE = torch.device('cpu')
 
 class EpisodeEnd(object):
 
@@ -38,7 +38,7 @@ def play(net, exp_queue):
     env.reset(seed=0)
     selector = DQNActionSelector(net, env.action_space.n, EPSILON, DEVICE)
 
-    print(f'sub pid: {os.getpid()}, net: {id(net)}')
+    print(f'sub pid: {os.getpid()}')
 
     for i in range(NUM_EPOCH):
         for episode in range(NUM_EPISODES):
@@ -55,7 +55,6 @@ def play(net, exp_queue):
                 state = next_state
                 episode_return += reward
             
-            # print(f'take_action: {net.state_dict()}')
             episode_end = EpisodeEnd(episode, i, episode_return)
             exp_queue.put(episode_end)
 
@@ -72,7 +71,7 @@ def train(net, target_net, exp_queue):
     trian_finish = False
     start_time = time.time()
 
-    print(f'pid: {os.getpid()}, net: {id(net)}')
+    print(f'pid: {os.getpid()}')
 
     while not trian_finish:
         while exp_queue.qsize() > 0:
@@ -92,10 +91,6 @@ def train(net, target_net, exp_queue):
                     print(f'progress: {progress} / {NUM_EPISODES * NUM_EPOCH}, elapse: {time.time() - start_time}, return: {np.mean(return_list[-10:])}')
 
                 trian_finish = (progress == NUM_EPISODES * NUM_EPOCH)    
-
-                # print(f'train: {net.state_dict()}')
-                # trian_finish = True
-                
             else:
                 state, action, reward, next_state, done = exp
                 replay_buffer.add(state, action, reward, next_state, done)
@@ -109,8 +104,6 @@ def train(net, target_net, exp_queue):
                         'dones': batch_done
                     }
                     agent.update(transition_dict)
-
-                    # print('did update!!!!')
 
     episodes_list = list(range(len(return_list)))
     plt.plot(episodes_list, return_list)
@@ -135,7 +128,6 @@ if __name__=='__main__':
     qnet = Qnet(state_dim, HIDDEN_DIM, action_dim).to(DEVICE)
     qnet.share_memory()
     target_qnet = Qnet(state_dim, HIDDEN_DIM, action_dim).to(DEVICE)
-    target_qnet.share_memory()
 
     exp_queue = mp.Queue(maxsize=20)
 

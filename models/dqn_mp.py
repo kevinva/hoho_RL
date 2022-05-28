@@ -40,6 +40,7 @@ class DQNAgent:
 
         self.q_net = qnet  # Q网络
         self.target_q_net = target_qnet # 目标网络
+        self.target_q_net.load_state_dict(self.q_net.state_dict())
 
         # 使用Adam优化器
         self.optimizer = optim.Adam(self.q_net.parameters(), lr=learning_rate)
@@ -59,6 +60,7 @@ class DQNAgent:
         dones = torch.tensor(transition_dict['dones'], dtype=torch.float).view(-1, 1).to(self.device)
 
         q_values = self.q_net(states).gather(1, actions)  # Q值
+
         # 下个状态的最大Q值
         max_next_q_values = self.target_q_net(next_states).max(1)[0].view(-1, 1)
         q_targets = rewards + self.gamma * max_next_q_values * (1 - dones)  # TD误差目标
@@ -68,6 +70,6 @@ class DQNAgent:
         self.optimizer.step()
 
         if self.count % self.target_update == 0:
-            self.target_q_net.load_state_dict(
-                self.q_net.state_dict())  # 更新目标网络
+            print(f'loss: {dqn_loss.item()}')
+            self.target_q_net.load_state_dict(self.q_net.state_dict())  # 更新目标网络
         self.count += 1
