@@ -1,11 +1,13 @@
 import torch
 import torch.multiprocessing as mp
 import random
+import time
+import os
 import gym
 import numpy as np
-from models.dqn import Qnet
+import matplotlib.pyplot as plt
 from utils.replay_buffer import *
-from models.dqn_mp import DQN, DQNActionSelector, DQNAgent
+from models.dqn_mp import Qnet, DQNActionSelector, DQNAgent
 
 ENVIRONMENT_NAME = 'CartPole-v1'
 LEARNING_RATE = 2e-3
@@ -18,7 +20,7 @@ TARGET_UPDATE_INTERVAL = 10
 BUFFER_SIZE = 10000
 MINIMAL_SIZE = 500
 BATCH_SIZE = 64
-DEVICE = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+DEVICE = torch.device('cpu') ##torch.device('cuda' if torch.cuda.is_available() else 'cpu')  # hoho: 使用多进程时，不知为啥在GPU上会模型不能共享更新
 
 
 class EpisodeEnd(object):
@@ -33,34 +35,48 @@ class EpisodeEnd(object):
 
 def play(net, exp_queue):
     env = gym.make(ENVIRONMENT_NAME)
-    random.seed(0)
+    env.reset(seed=0)
     selector = DQNActionSelector(net, env.action_space.n, EPSILON, DEVICE)
 
-    for i in range(10):
+    print(f'sub pid: {os.getpid()}, net: {id(net)}')
+
+    for i in range(NUM_EPOCH):
         for episode in range(NUM_EPISODES):
             episode_return = 0
             state = env.reset()
             done = False
+
             while not done:
                 action = selector.take_action(state)
                 next_state, reward, done, _ = env.step(action)
                 exp_queue.put((state, action, reward, next_state, done))
+                # print(f'play! pid: {os.getpid()}, queue size: {exp_queue.qsize()}')
+
                 state = next_state
                 episode_return += reward
             
+            # print(f'take_action: {net.state_dict()}')
             episode_end = EpisodeEnd(episode, i, episode_return)
             exp_queue.put(episode_end)
 
+            # print(f'episode finish! pid: {os.getpid()}, queue size: {exp_queue.qsize()}')
 
-def train(net, exp_queue):
+    print(f'done! pid: {os.getpid()}')
+
+
+def train(net, target_net, exp_queue):
     replay_buffer = ReplayBuffer(BUFFER_SIZE)
-    agent = DQNAgent(net, LEARNING_RATE, GAMMA, TARGET_UPDATE_INTERVAL, DEVICE)
+    agent = DQNAgent(net, target_net, LEARNING_RATE, GAMMA, TARGET_UPDATE_INTERVAL, DEVICE)
     return_list = []
     smooth_return_list = []
     trian_finish = False
+    start_time = time.time()
+
+    print(f'pid: {os.getpid()}, net: {id(net)}')
+
     while not trian_finish:
         while exp_queue.qsize() > 0:
-            print(f'queue size: {exp_queue.qsize()}')
+            # print(f'pid: {os.getpid()}, queue size: {exp_queue.qsize()}')
             
             exp = exp_queue.get()
             if isinstance(exp, EpisodeEnd):
@@ -70,13 +86,19 @@ def train(net, exp_queue):
                     smooth_return_list.append(exp.episode_return)
                 else:
                     smooth_return_list.append(smooth_return_list[-1] * 0.9 + exp.episode_return * 0.1)
-                    
-                if (exp.episode_i +  exp.epoch_i * NUM_EPISODES + 1) % 10 == 0:
-                    print(f'{exp.episode_i +  exp.epoch_i * NUM_EPISODES + 1} / {NUM_EPISODES * NUM_EPOCH}')
+                
+                progress = exp.episode_i +  exp.epoch_i * NUM_EPISODES + 1
+                if progress % 10 == 0:
+                    print(f'progress: {progress} / {NUM_EPISODES * NUM_EPOCH}, elapse: {time.time() - start_time}, return: {np.mean(return_list[-10:])}')
 
-                trian_finish = (exp.episode_i +  exp.epoch_i * NUM_EPISODES + 1 == NUM_EPISODES * NUM_EPOCH)    
+                trian_finish = (progress == NUM_EPISODES * NUM_EPOCH)    
+
+                # print(f'train: {net.state_dict()}')
+                # trian_finish = True
+                
             else:
-                replay_buffer.add(exp)
+                state, action, reward, next_state, done = exp
+                replay_buffer.add(state, action, reward, next_state, done)
                 if replay_buffer.size() > MINIMAL_SIZE:
                     batch_state, batch_action, batch_reward, batch_next_state, batch_done = replay_buffer.sample(BATCH_SIZE)
                     transition_dict = {
@@ -88,7 +110,15 @@ def train(net, exp_queue):
                     }
                     agent.update(transition_dict)
 
+                    # print('did update!!!!')
 
+    episodes_list = list(range(len(return_list)))
+    plt.plot(episodes_list, return_list)
+    plt.plot(episodes_list, smooth_return_list)
+    plt.xlabel('Episodes')
+    plt.ylabel('Returns')
+    plt.title('DQN on {}'.format(ENVIRONMENT_NAME))
+    plt.savefig(f'.\output\dqn_{int(time.time())}.png')
 
 
 if __name__=='__main__':
@@ -96,17 +126,22 @@ if __name__=='__main__':
     np.random.seed(0)
     torch.manual_seed(0)
 
+    mp.set_start_method('spawn')
+
     env = gym.make(ENVIRONMENT_NAME)
-    env.seed(0)
+    env.reset(seed=0)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.n
-    qnet = Qnet(state_dim, HIDDEN_DIM, action_dim)
+    qnet = Qnet(state_dim, HIDDEN_DIM, action_dim).to(DEVICE)
+    qnet.share_memory()
+    target_qnet = Qnet(state_dim, HIDDEN_DIM, action_dim).to(DEVICE)
+    target_qnet.share_memory()
 
-    mp.set_start_method('spawn')
-    exp_queue = mp.Queue(maxsize=100)
+    exp_queue = mp.Queue(maxsize=20)
+
     play_proc = mp.Process(target=play, args=(qnet, exp_queue))
     play_proc.start()
+
+    train(qnet, target_qnet, exp_queue)
+
     play_proc.join()
-
-    train(qnet, exp_queue)
-

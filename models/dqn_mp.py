@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
+import os
 
 class Qnet(nn.Module):
     ''' 只有一层隐藏层的Q网络 '''
@@ -28,20 +29,18 @@ class DQNActionSelector:
         if np.random.random() < self.epsilon:
             action = np.random.randint(self.action_dim)
         else:
-            state = torch.tensor([state], dtype=torch.float).to(self.device)
+            state = torch.tensor(np.array([state]), dtype=torch.float).to(self.device)
             action = self.qnet(state).argmax().item()
         return action
 
 
-
 class DQNAgent:
     ''' DQN算法 '''
-    def __init__(self, qnet, learning_rate, gamma, target_update, device):
+    def __init__(self, qnet, target_qnet, learning_rate, gamma, target_update, device):
 
-        self.q_net = qnet.to(device)  # Q网络
+        self.q_net = qnet  # Q网络
+        self.target_q_net = target_qnet # 目标网络
 
-        # 目标网络
-        self.target_q_net = qnet.to(device)
         # 使用Adam优化器
         self.optimizer = optim.Adam(self.q_net.parameters(), lr=learning_rate)
         self.gamma = gamma  # 折扣因子
@@ -50,6 +49,9 @@ class DQNAgent:
         self.device = device
 
     def update(self, transition_dict):
+
+        # print(f'[DQNAgent] pid: {os.getpid()}, net: {id(self.q_net)}')
+
         states = torch.tensor(transition_dict['states'], dtype=torch.float).to(self.device)
         actions = torch.tensor(transition_dict['actions']).view(-1, 1).to(self.device)
         rewards = torch.tensor(transition_dict['rewards'], dtype=torch.float).view(-1, 1).to(self.device)

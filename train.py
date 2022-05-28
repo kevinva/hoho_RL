@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import gym
 from tqdm import tqdm
 
+
 lr = 2e-3
 num_episodes = 100
 hidden_dim = 128
@@ -76,3 +77,5 @@ plt.xlabel('Episodes')
 plt.ylabel('Returns')
 plt.title('DQN on {}'.format(env_name))
 plt.show()
+
+
