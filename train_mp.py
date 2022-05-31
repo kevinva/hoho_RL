@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from utils.replay_buffer import *
 from models.dqn_mp import Qnet, DQNActionSelector, DQNAgent
 
+# 使用多进程，相比单进程，速度提高接近50%
+
 ENVIRONMENT_NAME = 'CartPole-v1'
 LEARNING_RATE = 1e-3
 NUM_EPOCH = 10

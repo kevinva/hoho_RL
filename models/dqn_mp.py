@@ -5,6 +5,8 @@ import torch.optim as optim
 import numpy as np
 import os
 
+# 可参考train_mp.py的运行方式
+
 class Qnet(nn.Module):
     ''' 只有一层隐藏层的Q网络 '''
     def __init__(self, state_dim, hidden_dim, action_dim):

@@ -27,7 +27,7 @@ class State:
         assert commission_perc >= 0.0
         assert isinstance(reset_on_close, bool)
         assert isinstance(reward_on_close, bool)
-        self.bars_count = bars_count   # 没一步step，都返回多个bar，所有游bar_count
+        self.bars_count = bars_count   # 每一步step会返回多个bar，这里指所有bar_count
         self.commission_perc = commission_perc
         self.reset_on_close = reset_on_close
         self.reward_on_close = reward_on_close
@@ -155,6 +155,9 @@ class StocksEnv(gym.Env):
                  random_ofs_on_reset=True, reward_on_close=False,
                  volumes=False):
         assert isinstance(prices, dict)
+
+        print(prices)
+
         self._prices = prices
         if state_1d:
             self._state = State1D(
@@ -214,5 +217,5 @@ class StocksEnv(gym.Env):
 
 
 if __name__ == '__main__':
-    for file in price_files('..\data'):
+    for file in price_files('..\..\data\stock'):
         print(load_relative(file))
