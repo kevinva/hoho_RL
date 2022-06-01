@@ -156,7 +156,6 @@ class StocksEnv(gym.Env):
                  volumes=False):
         assert isinstance(prices, dict)
 
-        print(prices)
 
         self._prices = prices
         if state_1d:
