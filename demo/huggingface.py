@@ -41,24 +41,63 @@ import matplotlib.pyplot as plt
 from transformers import AutoFeatureExtractor
 from torchvision.transforms import Compose, Normalize, RandomResizedCrop, ColorJitter, ToTensor
 
-dataset = load_dataset('imagefolder', data_dir='../data/test')
-# print(dataset['train'][0]['image'])
-# plt.imshow(dataset['train'][0]['image'])
+# dataset = load_dataset('imagefolder', data_dir='../data/test')
+# # print(dataset['train'][0]['image'])
+# # plt.imshow(dataset['train'][0]['image'])
+# # plt.show()
+
+# feature_extractor = AutoFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
+# normalize = Normalize(mean=feature_extractor.image_mean, std=feature_extractor.image_std)
+# _transforms = Compose([RandomResizedCrop(feature_extractor.size),
+#                        ColorJitter(brightness=0.5, hue=0.5), 
+#                        ToTensor(), 
+#                        normalize])
+
+# def transforms(examples):
+#     examples['pixel_values'] = [_transforms(image.convert('RGB')) for image in examples['image']]
+#     return examples
+
+# dataset.set_transform(transforms)
+# img = dataset['train'][1]['pixel_values']
+# print(img.shape)
+# plt.imshow(img.permute(1, 2, 0))
 # plt.show()
 
-feature_extractor = AutoFeatureExtractor.from_pretrained('google/vit-base-patch16-224')
-normalize = Normalize(mean=feature_extractor.image_mean, std=feature_extractor.image_std)
-_transforms = Compose([RandomResizedCrop(feature_extractor.size),
-                       ColorJitter(brightness=0.5, hue=0.5), 
-                       ToTensor(), 
-                       normalize])
 
-def transforms(examples):
-    examples['pixel_values'] = [_transforms(image.convert('RGB')) for image in examples['image']]
-    return examples
+from transformers import AutoModelForSequenceClassification
+from transformers import TrainingArguments, Trainer
+import numpy as np
+from datasets import load_metric
 
-dataset.set_transform(transforms)
-img = dataset['train'][1]['pixel_values']
-print(img.shape)
-plt.imshow(img.permute(1, 2, 0))
-plt.show()
+dataset = load_dataset('yelp_review_full')
+tokenizer = AutoTokenizer.from_pretrained('bert-base-cased')
+
+def tokenize_function(examples):
+    return tokenizer(examples['text'], padding='max_length', truncation=True)
+
+tokenized_datasets = dataset.map(tokenize_function, batched=True)
+small_train_dataset = tokenized_datasets['train'].shuffle(seed=42).select(range(1000))
+small_eval_dataset = tokenized_datasets['test'].shuffle(seed=42).select(range(1000))
+
+model = AutoModelForSequenceClassification.from_pretrained('bert-base-cased', num_labels=5)
+training_args = TrainingArguments(output_dir='./output/', evaluation_strategy='epoch')
+
+metric = load_metric('accuracy')
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)
+
+trainer = Trainer(
+    model=model,
+    args=training_args,
+    train_dataset=small_train_dataset,
+    eval_dataset=small_eval_dataset,
+    compute_metrics=compute_metrics
+)
+
+# trainer.train()
+print(tokenized_datasets)
+
+
