@@ -54,7 +54,7 @@ for i in range(10):
                         'rewards': b_r,
                         'dones': b_d
                     }
-                    agent.update(transition_dict)
+                    agent.update(transition_dict)   # off-policy
             return_list.append(episode_return)
             
             if len(smooth_return_list) == 0:
