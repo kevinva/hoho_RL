@@ -1,4 +1,12 @@
+import torch
+from torch.distributions import Normal
 import torch.multiprocessing as mp
+import torch.nn.functional as F
+
+import math
+from net import *
+from const import *
+import gym
 
 class Worker(mp.Process):
 
@@ -22,7 +30,7 @@ class Worker(mp.Process):
         self.env = env
         self.continuous = continuous
         self.name = str(id)
-        self.env.seed(id)
+        self.env.reset(seed=id)
         self.state_size = state_size
         self.action_size = action_size
         self.memory = []
@@ -36,10 +44,10 @@ class Worker(mp.Process):
         self.gamma = gamma
 
         # define local net for individual worker
-        self.local_policyNet = ActorDiscrete(self.state_size, self.action_size).to(device)
+        self.local_policyNet = ActorDiscrete(self.state_size, self.action_size).to(DEVICE)
         if self.continuous:
-            self.local_policyNet = ActorContinous(self.state_size, self.action_size).to(device)
-        self.local_valueNet = ValueNetwork(self.state_size, 1).to(device)
+            self.local_policyNet = ActorContinous(self.state_size, self.action_size).to(DEVICE)
+        self.local_valueNet = ValueNetwork(self.state_size, 1).to(DEVICE)
     
     def sync_global(self):
         self.local_valueNet.load_state_dict(self.global_valueNet.state_dict())
@@ -107,7 +115,7 @@ class Worker(mp.Process):
             state = self.env.reset()
             total_reward=0
             while True:
-                state = torch.from_numpy(state).float().unsqueeze(0).to(device)
+                state = torch.from_numpy(state).float().unsqueeze(0).to(DEVICE)
                 action, prob = self.local_policyNet.take_action(state)  # 离散空间取直接prob，连续空间取log prob
                 next_state, reward, done, _ = self.env.step(action)
                 self.memory.append([state, action, reward, next_state, done])
