@@ -3,6 +3,8 @@ import torch
 import torch.nn.functional as F
 from torch.distributions import Categorical,Normal
 from torch import nn
+import numpy as np
+from const import DEVICE
 
 class ValueNetwork(nn.Module):
 
@@ -24,7 +26,7 @@ class ActorDiscrete(nn.Module):
     """
     def __init__(self, state_size, action_size):
         super(ActorDiscrete, self).__init__()
-        self.seed = torch.manual_seed(0)
+        # self.seed = torch.manual_seed(0)  # hoho: 使用多进程时，在子进程里不能写这句！！！
         self.fc1 = nn.Linear(state_size, 128)
         self.fc2 = nn.Linear(128, action_size)
 
@@ -34,6 +36,7 @@ class ActorDiscrete(nn.Module):
         return out
 
     def take_action(self, state):
+        state = torch.tensor(np.array([state]), dtype=torch.float).to(DEVICE)
         probs = self.forward(state)
         m = Categorical(probs)
         action = m.sample()
@@ -62,6 +65,7 @@ class ActorContinous(nn.Module):
         return (mu, sigma)
 
     def take_action(self,state):
+        state = torch.tensor(np.array([state]), dtype=torch.float).to(DEVICE)
         with torch.no_grad():
             (mu, sigma) = self.forward(state)
         dist = Normal(mu, sigma)

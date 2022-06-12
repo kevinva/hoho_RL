@@ -36,8 +36,10 @@ class Worker(mp.Process):
         self.memory = []
 
         # passing global settings to worker
-        self.global_valueNet, self.global_value_optimizer = global_valueNet, global_value_optimizer
-        self.global_policyNet, self.global_policy_optimizer = global_policyNet, global_policy_optimizer
+        self.global_valueNet = global_valueNet
+        self.global_value_optimizer = global_value_optimizer
+        self.global_policyNet = global_policyNet
+        self.global_policy_optimizer = global_policy_optimizer
         self.global_epi, self.global_epi_rew = global_epi, global_epi_rew
         self.rew_queue = rew_queue
         self.max_epi = max_epi
@@ -48,6 +50,7 @@ class Worker(mp.Process):
         if self.continuous:
             self.local_policyNet = ActorContinous(self.state_size, self.action_size).to(DEVICE)
         self.local_valueNet = ValueNetwork(self.state_size, 1).to(DEVICE)
+
     
     def sync_global(self):
         self.local_valueNet.load_state_dict(self.global_valueNet.state_dict())
@@ -55,8 +58,8 @@ class Worker(mp.Process):
 
     def calculate_loss(self):
         # get experiences from current trajectory
-        states = torch.tensor([t[0] for t in self.memory], dtype=torch.float)
-        actions = torch.tensor([t[1] for t in self.memory], dtype=torch.float)
+        states = torch.tensor(np.array([t[0] for t in self.memory]), dtype=torch.float).to(DEVICE)
+        actions = torch.tensor(np.array([t[1] for t in self.memory]), dtype=torch.float).view(-1, 1).to(DEVICE)
 
         # -- calculate discount future rewards for every time step
         rewards = [t[2] for t in self.memory]
@@ -65,7 +68,7 @@ class Worker(mp.Process):
             discount = [self.gamma ** i for i in range(len(rewards) - i)]
             f_rewards = rewards[i:]
             fur_Rewards.append(sum(d * f for d, f in zip(discount, f_rewards)))
-        fur_Rewards = torch.tensor(fur_Rewards, dtype=torch.float).view(-1, 1)
+        fur_Rewards = torch.tensor(fur_Rewards, dtype=torch.float).view(-1, 1).to(DEVICE)
 
         # calculate loss for critic
         V = self.local_valueNet(states)
@@ -84,14 +87,17 @@ class Worker(mp.Process):
             policy_loss = (policy_loss - 0.005 * entropy).mean()
         else:
             probs = self.local_policyNet(states)
-            log_probs = torch.log(probs.gather(1, actions))
+            log_probs = torch.log(probs.gather(1, actions.long()))
             advantage = (fur_Rewards - V).detach()
-            policy_loss = -advantage * log_probs
+            policy_loss = (-advantage * log_probs).mean()
 
         return value_loss, policy_loss
 
     def update_global(self):
         value_loss, policy_loss = self.calculate_loss()
+
+        # print(f'value_loss: {value_loss}')
+        # print(f'policy loss: {policy_loss}')
 
         self.global_value_optimizer.zero_grad()
         value_loss.backward()
@@ -115,7 +121,7 @@ class Worker(mp.Process):
             state = self.env.reset()
             total_reward=0
             while True:
-                state = torch.from_numpy(state).float().unsqueeze(0).to(DEVICE)
+                # state = torch.from_numpy(state).float().unsqueeze(0).to(DEVICE)
                 action, prob = self.local_policyNet.take_action(state)  # 离散空间取直接prob，连续空间取log prob
                 next_state, reward, done, _ = self.env.step(action)
                 self.memory.append([state, action, reward, next_state, done])

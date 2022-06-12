@@ -63,6 +63,11 @@ class ActorCritic:
         log_probs = torch.log(self.actor(states).gather(1, actions))
 
         actor_loss = torch.mean(-log_probs * td_delta.detach())
+
+        # print(f'actions: {actions}')
+        # print(f'log_probs: {log_probs}')
+        # print(f'actor_loss: {actor_loss}')
+
         # 均方误差损失函数
         critic_loss = torch.mean(F.mse_loss(self.critic(states), td_target.detach()))
         self.actor_optimizer.zero_grad()

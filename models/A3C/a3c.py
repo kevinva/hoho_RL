@@ -1,4 +1,5 @@
 import random
+from tracemalloc import start
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -7,6 +8,7 @@ import torch.multiprocessing as mp
 from torch.distributions import Normal, Categorical
 # from torch.multiprocessing import Process
 import matplotlib.pyplot as plt
+import time
 from worker import Worker
 from net import *
 from const import *
@@ -36,6 +38,8 @@ class A3C():
         self.global_optimizer_policy = optim.Adam(self.global_policyNet.parameters(), lr=LR)
         self.global_optimizer_value = optim.Adam(self.global_valueNet.parameters(), lr=LR)
 
+        print(f'worker num: {self.worker_num}')
+
         # define the workers
         self.workers = [Worker(env,
                                continuous,
@@ -51,8 +55,7 @@ class A3C():
                                self.rew_queue,
                                self.max_episode,
                                GAMMA)
-
-                       for i in range(self.worker_num)]
+                               for i in range(self.worker_num)]        
 
 
     def train_worker(self):
@@ -101,9 +104,11 @@ if __name__ == '__main__':
     # myProcess.join()
     # print('val=', val)
 
+    start_time = time.time()
 
+    agent, scores = train_agent_for_env('CartPole-v1', False)
 
-    scores = train_agent_for_env('CartPole-v1', False)
+    print(f'time spend: {time.time() - start_time :.3f}')
 
     plt.plot(range(len(scores)), scores)
     plt.ylabel('Score')
