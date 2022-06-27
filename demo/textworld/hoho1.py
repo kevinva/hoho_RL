@@ -6,7 +6,8 @@ from textworld.gym.spaces.text_spaces import Word
 from textworld import EnvInfos
 import gym
 
-vocab = list(extract_vocab_from_gamefile('hoho1.z8'))
+vocab = extract_vocab_from_gamefile('hoho1.z8')
+print(vocab)
 action_space = Word(max_length=8, vocab=vocab)
 observation_space = Word(max_length=len(vocab), vocab=vocab)
 print(action_space)

@@ -1,3 +1,4 @@
+from operator import truediv
 import gym
 import logging
 from typing import Optional, Iterable, List
@@ -47,6 +48,8 @@ class TextWorldPreproc(gym.Wrapper):
         self._use_intermedate_reward = use_intermediate_reward
         self._num_fields = len(self._encode_extra_field) + \
                            int(self._encode_raw_text)
+        
+        
         self._last_admissible_commands = None
         self._last_extra_info = None
         self._tokens_limit = tokens_limit
@@ -123,23 +126,16 @@ class TextWorldPreproc(gym.Wrapper):
         return self._last_extra_info
 
 
+
 class Encoder(nn.Module):
-    """
-    Takes input sequences (after embeddings) and returns
-    the hidden state from LSTM
-    """
+
     def __init__(self, emb_size: int, out_size: int):
         super(Encoder, self).__init__()
-
-        self.net = nn.LSTM(
-            input_size=emb_size, hidden_size=out_size,
-            batch_first=True)
-
+        self.net = nn.LSTM(input_size=emb_size, hidden_size=out_size, batch_first=True)
+    
     def forward(self, x):
         self.net.flatten_parameters()
         _, hid_cell = self.net(x)
-        # Warn: if bidir=True or several layers,
-        # sequeeze has to be changed!
         return hid_cell[0].squeeze(0)
 
 
@@ -181,6 +177,10 @@ class Preprocessor(nn.Module):
         dev = self.emb.weight.device
         batch_t = [self.emb(torch.tensor(sample).to(dev))
                    for sample in batch]
+
+        seq_t_len = [t.size() for t in batch_t]
+        print(seq_t_len)
+
         batch_seq = rnn_utils.pack_sequence(
             batch_t, enforce_sorted=False)
         return encoder(batch_seq)
@@ -204,3 +204,42 @@ class Preprocessor(nn.Module):
         :return: tensor with encoded commands in original order
         """
         return self._apply_encoder(batch, self.enc_commands)
+
+
+if __name__ == '__main__':
+    encoder = Encoder(6, 3)
+    # batch_x = torch.tensor([[
+    #                     [1, 2, 3, 4, 5, 6],
+    #                     [0, 2, 4, 6, 8, 10],
+    #                     [1, 2, 4, 5, 7, 8]
+    #                   ], 
+    #                   [
+    #                     [10, 20, 33, 44, 55, 68],
+    #                     [10, 22, 42, 63, 80, 10],
+    #                     [14, 22, 44, 55, 76, 88]
+    #                   ]], dtype=torch.float)
+    # print(encoder(batch_x))
+    # x_tensor = torch.tensor([[9, 0, 0, 0], 
+    #                          [2, 5, 8, 2],  
+    #                          [1, 4, 0, 0]])
+    # batch_seq = rnn_utils.pack_sequence(x_tensor, enforce_sorted=False)
+    # print(batch_seq)
+
+    # data = [torch.tensor([9]),
+    #         torch.tensor([2, 5, 8, 2]),
+    #         torch.tensor([1, 4])]
+    # seq_len = [t.size(0) for t in data]
+    # data_pad = rnn_utils.pad_sequence(data, batch_first=True)
+    # data_pad_pack = rnn_utils.pack_padded_sequence(data_pad, seq_len, enforce_sorted=False, batch_first=True)
+    # print(data_pad)
+    # print(data_pad_pack)
+
+    data = [torch.tensor([[1, 2, 3]]),
+            torch.tensor([[1, 2, 3], [4, 2, 5], [2, 4, 5], [9, 3, 1]]),
+            torch.tensor([[2, 4, 6], [9, 6, 2]])]
+    seq_len = [t.size(0) for t in data]
+    data_pad = rnn_utils.pad_sequence(data, batch_first=True)
+    data_pad_pack = rnn_utils.pack_padded_sequence(data_pad, seq_len, enforce_sorted=False, batch_first=True)
+    print(data_pad)
+    print(data_pad_pack)
+    
