@@ -29,7 +29,6 @@ class ValueNet(nn.Module):
         x = F.relu(self.fc1(x))
         return self.fc2(x)
 
-
 class ActorCritic:
 
     def __init__(self, state_dim, hidden_dim, action_dim, actor_lr, critic_lr, gamma, device):
@@ -44,10 +43,13 @@ class ActorCritic:
         self.device = device
 
     def take_action(self, state):
+        # print(f'state={state}')
         state = torch.tensor(np.array([state]), dtype=torch.float).to(self.device)
         probs = self.actor(state)
+        # print(f'probs={probs}')
         action_dist = torch.distributions.Categorical(probs)
         action = action_dist.sample()
+        # print(f'action={action}, {action.item()}')
         return action.item()
 
     def update(self, transition_dict):
