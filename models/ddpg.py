@@ -1,13 +1,23 @@
 import random
 import numpy as np
-
+import time
 import torch
 from torch import nn
 import torch.nn.functional as F
 import matplotlib.pyplot as plt
 import gym
-import rl_utils
+import pybullet_envs
 
+import os
+import sys
+dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(dir_path)
+
+from utils.config import *
+from utils.replay_buffer import *
+
+ENV_ID = 'MinitaurBulletEnv-v0'
+HIDDEN_SIZE = 64
 
 class PolicyNet(torch.nn.Module):
     def __init__(self, state_dim, hidden_dim, action_dim, action_bound):
@@ -96,10 +106,10 @@ class DDPG:
         self.device = device
 
     def take_action(self, state):
-        state = torch.tensor([state], dtype=torch.float).to(self.device)
-        action = self.actor(state).item()
+        state = torch.tensor(np.array([state]), dtype=torch.float).to(self.device)
+        action = self.actor(state)[0]
         # 给动作添加噪声，增加探索
-        action = action + self.sigma * np.random.randn(self.action_dim)
+        action = action.detach().numpy() + self.sigma * np.random.randn(self.action_dim)
         return action
 
     def soft_update(self, net, target_net):
@@ -109,15 +119,15 @@ class DDPG:
                                     param.data * self.tau)
 
     def update(self, transition_dict):
-        states = torch.tensor(transition_dict['states'],
+        states = torch.tensor(np.array(transition_dict['states']),
                               dtype=torch.float).to(self.device)
-        actions = torch.tensor(transition_dict['actions'],
+        actions = torch.tensor(np.array(transition_dict['actions']),
+                               dtype=torch.float).to(self.device)
+        rewards = torch.tensor(np.array(transition_dict['rewards']),
                                dtype=torch.float).view(-1, 1).to(self.device)
-        rewards = torch.tensor(transition_dict['rewards'],
-                               dtype=torch.float).view(-1, 1).to(self.device)
-        next_states = torch.tensor(transition_dict['next_states'],
+        next_states = torch.tensor(np.array(transition_dict['next_states']),
                                    dtype=torch.float).to(self.device)
-        dones = torch.tensor(transition_dict['dones'],
+        dones = torch.tensor(np.array(transition_dict['dones']),
                              dtype=torch.float).view(-1, 1).to(self.device)
 
         # critic网络像更新DQN一样，只是动作由target_actor输出
@@ -146,3 +156,55 @@ class DDPG:
 
         self.soft_update(self.actor, self.target_actor)  # 软更新策略网络
         self.soft_update(self.critic, self.target_critic)  # 软更新价值网络
+
+
+
+if __name__ == '__main__': 
+    tau = 0.005 # 软更新参数
+    sigma = 0.01 # 高斯噪声标准差 
+    buffer_size = 10000
+    minial_size = 1000
+    batch_size = 64
+    replay_buffer = ReplayBuffer(buffer_size)
+    env = gym.make(ENV_ID)
+    env.reset()
+    torch.manual_seed(0)
+    state_dim = env.observation_space.shape[0]
+    action_dim = env.action_space.shape[0]
+    action_bound = env.action_space.high[0]
+    agent = DDPG(state_dim, action_dim, state_dim + action_dim, HIDDEN_SIZE, False, action_bound, sigma, LEARNING_RATE, LEARNING_RATE, tau, GAMMA, DEVICE)
+    num_episodes = 100
+    start_time = time.time()
+    return_list = []
+    for i in range(EPOCH_NUM):
+        for i_episode in range(num_episodes):
+            episode_return = 0
+            state = env.reset()
+            done = False
+            while not done:
+                action = agent.take_action(state)
+                next_state, reward, done, _ = env.step(action)
+                
+                replay_buffer.add(state, action, reward, next_state, done)
+                state = next_state                
+                
+                episode_return += reward
+
+                if replay_buffer.size() > minial_size:
+                    b_s, b_a, b_r, b_ns, b_d = replay_buffer.sample(batch_size)
+                    transition_dict = {'states': b_s, 'actions': b_a, 'next_states': b_ns, 'rewards': b_r, 'dones': b_d}
+                    agent.update(transition_dict)
+
+            return_list.append(episode_return)
+            
+            progress = i_episode + i * num_episodes + 1
+            if progress % 10 == 0:
+                print(f'progress: {progress} / {num_episodes * EPOCH_NUM} | elapse: {time.time() - start_time:.3f}s | return: {np.mean(return_list[-10:])}')
+
+
+    episodes_list = list(range(len(return_list)))
+    plt.plot(episodes_list, return_list)
+    plt.xlabel('Episodes')
+    plt.ylabel('Returns')
+    plt.title('REINFORCE on {}'.format(ENV_ID))
+    plt.show()

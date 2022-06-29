@@ -7,9 +7,9 @@ RENDER = True
 
 
 if __name__ == '__main__':
-    spec = gym.envs.registry.spec(ENV_ID)
-    spec.kwargs['render'] = RENDER
-    print(spec)
+    # spec = gym.envs.registry.spec(ENV_ID)
+    # spec.kwargs['render'] = RENDER
+    # print(spec)
     env = gym.make(ENV_ID)
 
     print(f'Observation space: {env.observation_space}')
