@@ -129,7 +129,7 @@ if __name__ == '__main__':
             else:
                 average_return_list.append(average_return_list[-1] * 0.8 + episode_return * 0.2)
 
-            agent.update(transition_dict)  # 注意这里于DQN的不同：需要一个完整的片段（即游戏结束）才能开始训练(on-policy)
+            agent.update(transition_dict)  # 注意这里跟DQN的不同（跟PG一样）：需要一个完整的片段（即游戏结束）才能开始训练(on-policy)
 
             progress = i_episode + i * num_episodes + 1
             if progress % 10 == 0:

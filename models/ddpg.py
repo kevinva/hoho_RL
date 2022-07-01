@@ -193,7 +193,7 @@ if __name__ == '__main__':
                 if replay_buffer.size() > minial_size:
                     b_s, b_a, b_r, b_ns, b_d = replay_buffer.sample(batch_size)
                     transition_dict = {'states': b_s, 'actions': b_a, 'next_states': b_ns, 'rewards': b_r, 'dones': b_d}
-                    agent.update(transition_dict)
+                    agent.update(transition_dict)   # 注意这里不需要等一个回合结束再开始训练（跟DQN一样，跟PG不同）
 
             return_list.append(episode_return)
             
