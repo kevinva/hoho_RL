@@ -107,7 +107,7 @@ class DDPG:
 
     def take_action(self, state):
         state = torch.tensor(np.array([state]), dtype=torch.float).to(self.device)
-        action = self.actor(state)[0]
+        action = self.actor(state)[0].clamp(min=-1, max=1)
         # 给动作添加噪声，增加探索
         action = action.detach().numpy() + self.sigma * np.random.randn(self.action_dim)
         return action
