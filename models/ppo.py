@@ -9,7 +9,7 @@ import os, sys
 root_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(root_dir_path)
 
-from utils.config import *
+from utils.const import *
 from utils.replay_buffer import *
 from utils.helper import *
 

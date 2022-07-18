@@ -13,7 +13,7 @@ sys.path.append(root_dir_path)
 
 from utils.replay_buffer import *
 from utils.helper import *
-from utils.config import *
+from utils.const import *
 
 class Qnet(nn.Module):
     ''' 只有一层隐藏层的Q网络 '''
