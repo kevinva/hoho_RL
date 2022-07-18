@@ -22,8 +22,8 @@ def compute_advantage(gamma, lmbda, td_delta):
 def train_on_policy_agent(env, agent, num_epoch, num_episodes):
     return_list = []
     for i in range(num_epoch):
-        start_time = time.time()
         for i_episode in range(num_episodes):
+            start_time = time.time()
             episode_return = 0
             transition_dict = {'states': [], 'actions': [], 'next_states': [], 'rewards': [], 'dones': []}
             state = env.reset()
@@ -50,8 +50,8 @@ def train_on_policy_agent(env, agent, num_epoch, num_episodes):
 def train_off_policy_agent(env, agent, num_epoch, num_episodes, replay_buffer, minimal_size, batch_size):
     return_list = []
     for i in range(num_epoch):
-        start_time = time.time()
         for i_episode in range(num_episodes):
+            start_time = time.time()
             episode_return = 0
             state = env.reset()
             done = False
@@ -123,9 +123,9 @@ class MountainCarNetDistillery(nn.Module):
     def forward(self, x):
         return self.ref_net(x), self.trn_net(x)
 
-    def extra_reward(self, obs):
-        r1, r2 = self.forward(torch.FloatTensor([obs]))
-        return (r1 - r2).abs().detach().numpy()[0][0]
+    def extra_reward(self, obs, device):
+        r1, r2 = self.forward(torch.FloatTensor([obs]).to(device))
+        return (r1 - r2).abs().detach().cpu().numpy()[0][0]
 
     def loss(self, obs_t):
         r1_t, r2_t = self.forward(obs_t)
@@ -133,15 +133,16 @@ class MountainCarNetDistillery(nn.Module):
 
 
 class NetworkDistillationRewardWrapper(gym.Wrapper):
-    def __init__(self, env, reward_callable, reward_scale: float = 1.0, sum_rewards: bool = True):
+    def __init__(self, env, reward_callable, device, reward_scale: float = 1.0, sum_rewards: bool = True):
         super(NetworkDistillationRewardWrapper, self).__init__(env)
         self.reward_scale = reward_scale
         self.reward_callable = reward_callable
         self.sum_rewards = sum_rewards
+        self.device = device
 
     def step(self, action):
         obs, reward, done, info = self.env.step(action)
-        extra_reward = self.reward_callable(obs)
+        extra_reward = self.reward_callable(obs, self.device)
         if self.sum_rewards:
             res_rewards = reward + self.reward_scale * extra_reward
         else:
@@ -149,18 +150,19 @@ class NetworkDistillationRewardWrapper(gym.Wrapper):
         return obs, res_rewards, done, info
 
 
-class Distrillor:
+class MountainCarDistrillor:
 
-    def __init__(self, lr, distrill_net: MountainCarNetDistillery, device):
-        self.device = device
-        self.distrill_net = distrill_net.to(self.device)
+    def __init__(self, lr, distrill_net: MountainCarNetDistillery):
+        self.distrill_net = distrill_net
         self.optim = optim.Adam(distrill_net.trn_net.parameters(), lr=lr)
 
-    def update(self, states):
-        batch_states = torch.FloatTensor(states).to(self.device)
+    def update(self, states, device):
+        batch_states = torch.FloatTensor(states).to(device)
         self.optim.zero_grad()
         loss = self.distrill_net.loss(batch_states)
         loss.backward()
         self.optim.step()
+
+        # print(f'distrill loss={loss.item()}')
 
         return loss.item()

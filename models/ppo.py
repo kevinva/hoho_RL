@@ -89,21 +89,53 @@ class PPO:
 
 
 if __name__ == '__main__':
-    num_episodes = 500
+    num_episodes = 200
     hidden_dim = 128
     lmbda = 0.95
     eps = 0.2
     actor_lr = 1e-3
     critic_lr = 1e-2
-
-    env_name = 'CartPole-v0'
+    distrill_lr = 1e-3
+    
+    env_name = 'MountainCar-v0'
+    # env_name = 'CartPole-v1'
     env = gym.make(env_name)
-    env.reset(seed=0)
-    torch.manual_seed(0)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.n
+    net_distrill = MountainCarNetDistillery(state_dim).to(DEVICE)
+    distrillor = MountainCarDistrillor(distrill_lr, net_distrill)
+    env = NetworkDistillationRewardWrapper(env, net_distrill.extra_reward, DEVICE)
+    env.reset(seed=0)
+    torch.manual_seed(0)
     agent = PPO(state_dim, hidden_dim, action_dim, actor_lr, critic_lr, lmbda, EPOCH_NUM, eps, GAMMA, DEVICE)
-    return_list = train_on_policy_agent(env, agent, EPOCH_NUM, num_episodes)
+    # return_list = train_on_policy_agent(env, agent, EPOCH_NUM, num_episodes)
+
+    return_list = []
+    for i in range(EPOCH_NUM):
+        for i_episode in range(num_episodes):
+            start_time = time.time()
+            episode_return = 0
+            transition_dict = {'states': [], 'actions': [], 'next_states': [], 'rewards': [], 'dones': []}
+            state = env.reset()
+            done = False
+            while not done:
+                action = agent.take_action(state)
+                next_state, reward, done, _ = env.step(action)
+                transition_dict['states'].append(state)
+                transition_dict['actions'].append(action)
+                transition_dict['next_states'].append(next_state)
+                transition_dict['rewards'].append(reward)
+                transition_dict['dones'].append(done)
+                state = next_state
+                episode_return += reward
+            return_list.append(episode_return)
+            agent.update(transition_dict)
+            distrillor.update(transition_dict['states'], DEVICE)
+
+            progress = (i_episode + 1) + i * num_episodes
+            total = EPOCH_NUM * num_episodes
+            if progress % 10 == 0:
+                print(f'progress={progress} / {total} | elapse={time.time() - start_time} | average return={np.mean(return_list[-10:])}')
 
     episode_list = list(range(len(return_list)))
     plt.plot(episode_list, return_list)
