@@ -2,6 +2,8 @@ import time
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
 import gym
 import collections
 
@@ -129,6 +131,7 @@ class MountainCarNetDistillery(nn.Module):
         r1_t, r2_t = self.forward(obs_t)
         return F.mse_loss(r2_t, r1_t).mean()
 
+
 class NetworkDistillationRewardWrapper(gym.Wrapper):
     def __init__(self, env, reward_callable, reward_scale: float = 1.0, sum_rewards: bool = True):
         super(NetworkDistillationRewardWrapper, self).__init__(env)
@@ -146,5 +149,18 @@ class NetworkDistillationRewardWrapper(gym.Wrapper):
         return obs, res_rewards, done, info
 
 
-if __name__ == '__main__':
-    print(counts_hash([1.0001, 23.23]))
+class Distrillor:
+
+    def __init__(self, lr, distrill_net: MountainCarNetDistillery, device):
+        self.device = device
+        self.distrill_net = distrill_net.to(self.device)
+        self.optim = optim.Adam(distrill_net.trn_net.parameters(), lr=lr)
+
+    def update(self, states):
+        batch_states = torch.FloatTensor(states).to(self.device)
+        self.optim.zero_grad()
+        loss = self.distrill_net.loss(batch_states)
+        loss.backward()
+        self.optim.step()
+
+        return loss.item()
