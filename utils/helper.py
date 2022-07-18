@@ -1,6 +1,7 @@
 import time
 import numpy as np
 import torch
+import torch.nn as nn
 import gym
 import collections
 
@@ -98,6 +99,51 @@ class PseudoCountRewardWrapper(gym.Wrapper):
 def counts_hash(obs):
     r = obs.tolist()
     return tuple(map(lambda v: round(v, 3), r))
+
+
+class MountainCarNetDistillery(nn.Module):
+    def __init__(self, obs_size: int, hid_size: int = 128):
+        super(MountainCarNetDistillery, self).__init__()
+
+        self.ref_net = nn.Sequential(
+            nn.Linear(obs_size, hid_size),
+            nn.ReLU(),
+            nn.Linear(hid_size, hid_size),
+            nn.ReLU(),
+            nn.Linear(hid_size, 1),
+        )
+        self.ref_net.train(False)
+
+        self.trn_net = nn.Sequential(
+            nn.Linear(obs_size, 1),
+        )
+
+    def forward(self, x):
+        return self.ref_net(x), self.trn_net(x)
+
+    def extra_reward(self, obs):
+        r1, r2 = self.forward(torch.FloatTensor([obs]))
+        return (r1 - r2).abs().detach().numpy()[0][0]
+
+    def loss(self, obs_t):
+        r1_t, r2_t = self.forward(obs_t)
+        return F.mse_loss(r2_t, r1_t).mean()
+
+class NetworkDistillationRewardWrapper(gym.Wrapper):
+    def __init__(self, env, reward_callable, reward_scale: float = 1.0, sum_rewards: bool = True):
+        super(NetworkDistillationRewardWrapper, self).__init__(env)
+        self.reward_scale = reward_scale
+        self.reward_callable = reward_callable
+        self.sum_rewards = sum_rewards
+
+    def step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        extra_reward = self.reward_callable(obs)
+        if self.sum_rewards:
+            res_rewards = reward + self.reward_scale * extra_reward
+        else:
+            res_rewards = np.array([reward, extra_reward * self.reward_scale])
+        return obs, res_rewards, done, info
 
 
 if __name__ == '__main__':
