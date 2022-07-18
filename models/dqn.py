@@ -3,6 +3,17 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import numpy as np
+import random
+import gym
+import matplotlib.pyplot as plt
+
+import os, sys
+root_dir_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+sys.path.append(root_dir_path)
+
+from utils.replay_buffer import *
+from utils.helper import *
+from utils.config import *
 
 class Qnet(nn.Module):
     ''' 只有一层隐藏层的Q网络 '''
@@ -61,6 +72,37 @@ class DQN:
         self.optimizer.step()
 
         if self.count % self.target_update == 0:
-            print(f'loss: {dqn_loss.item()}')
+            # print(f'loss: {dqn_loss.item()}')
             self.target_q_net.load_state_dict(self.q_net.state_dict())  # 更新目标网络
         self.count += 1
+
+
+if __name__ == '__main__':
+    num_episodes = 100
+    hidden_dim = 128
+    epsilon = 0.01
+    target_update = 10
+    buffer_size = 10000
+    minimal_size = 500
+    batch_size = 64
+
+    env_name = 'MountainCar-v0'
+    env = gym.make(env_name)
+    env = PseudoCountRewardWrapper(env, counts_hash, 1.2)
+    random.seed(0)
+    np.random.seed(0)
+    env.seed(0)
+    torch.manual_seed(0)
+    replay_buffer = ReplayBuffer(buffer_size)
+    state_dim = env.observation_space.shape[0]
+    action_dim = env.action_space.n
+    agent = DQN(state_dim, hidden_dim, action_dim, LEARNING_RATE, GAMMA, epsilon, target_update, DEVICE)
+
+    return_list = train_off_policy_agent(env, agent, EPOCH_NUM, num_episodes, replay_buffer, minimal_size, batch_size)
+
+    episodes_list = list(range(len(return_list)))
+    plt.plot(episodes_list, return_list)
+    plt.xlabel('Episodes')
+    plt.ylabel('Returns')
+    plt.title('DQN on {}'.format(env_name))
+    plt.show()

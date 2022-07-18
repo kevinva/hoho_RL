@@ -1,6 +1,8 @@
 import time
 import numpy as np
 import torch
+import gym
+import collections
 
 
 def compute_advantage(gamma, lmbda, td_delta):
@@ -66,3 +68,37 @@ def train_off_policy_agent(env, agent, num_epoch, num_episodes, replay_buffer, m
             if progress % 10 == 0:
                 print(f'progress={progress} / {total} | elapse={time.time() - start_time} | average return={np.mean(return_list[-10:])}')
     return return_list
+
+
+
+class PseudoCountRewardWrapper(gym.Wrapper):
+    def __init__(self, env, hash_function = lambda o: o,
+                 reward_scale: float = 1.0):
+        super(PseudoCountRewardWrapper, self).__init__(env)
+        self.hash_function = hash_function
+        self.reward_scale = reward_scale
+        self.counts = collections.Counter()
+
+    def step(self, action):
+        obs, reward, done, info = self.env.step(action)
+        extra_reward = self._count_observation(obs)
+        return obs, reward + self.reward_scale * extra_reward, \
+               done, info
+
+    def _count_observation(self, obs) -> float:
+        """
+        Increments observation counter and returns pseudo-count reward
+        :param obs: observation
+        :return: extra reward
+        """
+        h = self.hash_function(obs)
+        self.counts[h] += 1
+        return np.sqrt(1/self.counts[h])
+
+def counts_hash(obs):
+    r = obs.tolist()
+    return tuple(map(lambda v: round(v, 3), r))
+
+
+if __name__ == '__main__':
+    print(counts_hash([1.0001, 23.23]))
