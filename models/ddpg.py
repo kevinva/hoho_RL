@@ -88,16 +88,13 @@ class DDPG:
                                        activation=F.relu,
                                        out_fn=out_fn).to(device)
         self.critic = TwoLayerFC(num_in_critic, 1, hidden_dim).to(device)
-        self.target_critic = TwoLayerFC(num_in_critic, 1,
-                                        hidden_dim).to(device)
+        self.target_critic = TwoLayerFC(num_in_critic, 1, hidden_dim).to(device)
         # 初始化目标价值网络并设置和价值网络相同的参数
         self.target_critic.load_state_dict(self.critic.state_dict())
         # 初始化目标策略网络并设置和策略相同的参数
         self.target_actor.load_state_dict(self.actor.state_dict())
-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(),
-                                                lr=actor_lr)
-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(),
-                                                 lr=critic_lr)
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=actor_lr)
+        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=critic_lr)
         self.gamma = gamma
         self.sigma = sigma  # 高斯噪声的标准差,均值直接设为0
         self.action_bound = action_bound  # action_bound是环境可以接受的动作最大值
@@ -113,43 +110,27 @@ class DDPG:
         return action
 
     def soft_update(self, net, target_net):
-        for param_target, param in zip(target_net.parameters(),
-                                       net.parameters()):
-            param_target.data.copy_(param_target.data * (1.0 - self.tau) +
-                                    param.data * self.tau)
+        for param_target, param in zip(target_net.parameters(), net.parameters()):
+            param_target.data.copy_(param_target.data * (1.0 - self.tau) + param.data * self.tau)
 
     def update(self, transition_dict):
-        states = torch.tensor(np.array(transition_dict['states']),
-                              dtype=torch.float).to(self.device)
-        actions = torch.tensor(np.array(transition_dict['actions']),
-                               dtype=torch.float).to(self.device)
-        rewards = torch.tensor(np.array(transition_dict['rewards']),
-                               dtype=torch.float).view(-1, 1).to(self.device)
-        next_states = torch.tensor(np.array(transition_dict['next_states']),
-                                   dtype=torch.float).to(self.device)
-        dones = torch.tensor(np.array(transition_dict['dones']),
-                             dtype=torch.float).view(-1, 1).to(self.device)
+        states = torch.tensor(np.array(transition_dict['states']), dtype=torch.float).to(self.device)
+        actions = torch.tensor(np.array(transition_dict['actions']), dtype=torch.float).to(self.device)
+        rewards = torch.tensor(np.array(transition_dict['rewards']), dtype=torch.float).view(-1, 1).to(self.device)
+        next_states = torch.tensor(np.array(transition_dict['next_states']), dtype=torch.float).to(self.device)
+        dones = torch.tensor(np.array(transition_dict['dones']), dtype=torch.float).view(-1, 1).to(self.device)
 
         # critic网络像更新DQN一样，只是动作由target_actor输出
         # 注意target_critic搭配target_actor使用
-        next_q_values = self.target_critic(
-            torch.cat(
-                [next_states, self.target_actor(next_states)], dim=1))
+        next_q_values = self.target_critic(torch.cat([next_states, self.target_actor(next_states)], dim=1))
         q_targets = rewards + self.gamma * next_q_values * (1 - dones)
-        critic_loss = torch.mean(
-            F.mse_loss(
-                # MSE损失函数
-                self.critic(torch.cat([states, actions], dim=1)),
-                q_targets))
+        critic_loss = torch.mean(F.mse_loss(self.critic(torch.cat([states, actions], dim=1)), q_targets))   # MSE损失函数
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
         self.critic_optimizer.step()
 
         # 注意critic搭配actor使用
-        actor_loss = -torch.mean(
-            self.critic(
-                # 策略网络就是为了使得Q值最大化
-                torch.cat([states, self.actor(states)], dim=1)))
+        actor_loss = -torch.mean(self.critic(torch.cat([states, self.actor(states)], dim=1)))   # 策略网络就是为了使得Q值最大化
         self.actor_optimizer.zero_grad()
         actor_loss.backward()
         self.actor_optimizer.step()
