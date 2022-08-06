@@ -21,6 +21,7 @@ np.random.seed(0)
 env.seed(0)
 torch.manual_seed(0)
 
+
 actor_lr = 3e-4
 critic_lr = 3e-3
 alpha_lr = 3e-4
