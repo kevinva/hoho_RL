@@ -62,7 +62,11 @@ class DQN:
         next_states = torch.tensor(transition_dict['next_states'], dtype=torch.float).to(self.device)
         dones = torch.tensor(transition_dict['dones'], dtype=torch.float).view(-1, 1).to(self.device)
 
-        q_values = self.q_net(states).gather(1, actions)  # Q值 (gather用法参考：https://blog.csdn.net/qq_38964360/article/details/131550919)
+        qnet_output = self.q_net(states)
+        q_values = qnet_output.gather(1, actions)  # Q值 (gather用法参考：https://blog.csdn.net/qq_38964360/article/details/131550919)
+        
+        # print(f"qnet_output: {qnet_output}, actions: {actions.shape}, q_values: {q_values}")
+        
         # 下个状态的最大Q值
         max_next_q_values = self.target_q_net(next_states).max(1)[0].view(-1, 1)
         q_targets = rewards + self.gamma * max_next_q_values * (1 - dones)  # TD误差目标
@@ -96,6 +100,9 @@ if __name__ == '__main__':
     replay_buffer = ReplayBuffer(buffer_size)
     state_dim = env.observation_space.shape[0]
     action_dim = env.action_space.n
+
+    # print(f"action_dim: {action_dim}, state_dim: {state_dim}")
+
     agent = DQN(state_dim, hidden_dim, action_dim, LEARNING_RATE, GAMMA, epsilon, target_update, DEVICE)
 
     return_list = train_off_policy_agent(env, agent, EPOCH_NUM, num_episodes, replay_buffer, minimal_size, batch_size)

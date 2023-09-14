@@ -58,6 +58,9 @@ def train_off_policy_agent(env, agent, num_epoch, num_episodes, replay_buffer, m
             while not done:
                 action = agent.take_action(state)
                 next_state, reward, done, _ = env.step(action)
+
+                # print(f"action: {action}, state: {next_state.shape}")
+
                 replay_buffer.add(state, action, reward, next_state, done)
                 state = next_state
                 episode_return += reward
