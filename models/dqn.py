@@ -62,7 +62,7 @@ class DQN:
         next_states = torch.tensor(transition_dict['next_states'], dtype=torch.float).to(self.device)
         dones = torch.tensor(transition_dict['dones'], dtype=torch.float).view(-1, 1).to(self.device)
 
-        q_values = self.q_net(states).gather(1, actions)  # Q值
+        q_values = self.q_net(states).gather(1, actions)  # Q值 (gather用法参考：https://blog.csdn.net/qq_38964360/article/details/131550919)
         # 下个状态的最大Q值
         max_next_q_values = self.target_q_net(next_states).max(1)[0].view(-1, 1)
         q_targets = rewards + self.gamma * max_next_q_values * (1 - dones)  # TD误差目标
