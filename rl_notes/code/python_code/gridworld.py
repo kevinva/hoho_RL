@@ -8,10 +8,10 @@ class GridWorld(MDP):
     # labels for terminate action and terminal state
     TERMINATE = 'terminate'
     TERMINAL = ('terminal', 'terminal')
-    LEFT = '\u25C4'
-    UP = '\u25B2'
-    RIGHT = '\u25BA'
-    DOWN = '\u25BC'
+    LEFT = "left" #'\u25C4'
+    UP = "up" #'\u25B2'
+    RIGHT = "right" #'\u25BA'
+    DOWN = "down" #'\u25BC'
 
     def __init__(
         self,

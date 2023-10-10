@@ -22,6 +22,8 @@ class ValueIteration:
                         state, action
                     ):
                         reward = self.mdp.get_reward(state, action, new_state)
+                        print(f"state = {state}, action = {action}, new_state = {new_state}, reward = {reward}")
+
                         new_value += probability * (
                             reward
                             + (
@@ -42,3 +44,18 @@ class ValueIteration:
             # Terminate if the value function has converged
             if delta < theta:
                 return i
+
+
+
+if __name__ == "__main__":
+    from gridworld import GridWorld
+    from tabular_value_function import TabularValueFunction
+
+    gridworld = GridWorld()
+    values = TabularValueFunction()
+    ValueIteration(gridworld, values).value_iteration(max_iterations = 100)
+    gridworld.visualise_value_function(values, "Value function after 100 iterations")
+
+    policy = values.extract_policy(gridworld)
+    gridworld.visualise_policy(policy, "Policy after 100 iterations")
+

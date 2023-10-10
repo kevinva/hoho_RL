@@ -1,0 +1,597 @@
+create state = (0, 0), parent = None, action = None, reward = 0.0
+select myself: state = (0, 0)
+expand!!!
+create state = (1, 0), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 27, cumulative_reward = 0.06461081889226677
+===========================================
+
+
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 28, cumulative_reward = -0.058149737003040096
+===========================================
+
+
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 14, cumulative_reward = -0.2541865828329001
+===========================================
+
+
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 22, cumulative_reward = -0.10941898913151242
+===========================================
+
+
+select child: action = right£¬ from state = (0, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = left, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 112, cumulative_reward = 8.335248417898112e-06
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (1, 0), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 5, cumulative_reward = -0.6561
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 31, cumulative_reward = 0.04239115827521624
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+create state = (1, 0), parent = (0, 0), action = up, reward = 0.0
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = left, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 36, cumulative_reward = -0.025031555049932437
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 40, cumulative_reward = 0.016423203268260675
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 19, cumulative_reward = 0.15009463529699918
+===========================================
+
+
+select child: action = right£¬ from state = (0, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = up, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 12, cumulative_reward = 0.31381059609000006
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 25, cumulative_reward = -0.07976644307687256
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 2), parent = (0, 1), action = up, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 45, cumulative_reward = -0.009697737297875247
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 10, cumulative_reward = 0.3874204890000001
+===========================================
+
+
+select child: action = right£¬ from state = (0, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = down, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 13, cumulative_reward = -0.2824295364810001
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (1, 0), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 37, cumulative_reward = -0.022528399544939195
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 34, cumulative_reward = -0.030903154382632636
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = right, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 37, cumulative_reward = -0.022528399544939195
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+create state = (0, 1), parent = (0, 0), action = left, reward = 0.0
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 2), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 38, cumulative_reward = -0.020275559590445275
+===========================================
+
+
+select child: action = right£¬ from state = (0, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (2, 0), parent = (1, 0), action = right, reward = 0.0
+simulate: start at = (2, 0)
+simulate end: depth = 5, cumulative_reward = -0.6561
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 27, cumulative_reward = -0.06461081889226677
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = down, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 51, cumulative_reward = -0.00515377520732012
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (1, 0), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 27, cumulative_reward = 0.06461081889226677
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = right, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 51, cumulative_reward = -0.00515377520732012
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 26, cumulative_reward = -0.0717897987691853
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 15, cumulative_reward = 0.2287679245496101
+===========================================
+
+
+select child: action = right£¬ from state = (0, 0)
+select child: action = up£¬ from state = (1, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = up, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 4, cumulative_reward = -0.7290000000000001
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (1, 0), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 12, cumulative_reward = -0.31381059609000006
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 0), parent = (0, 1), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 67, cumulative_reward = -0.0009550049507968268
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 61, cumulative_reward = -0.001797010299914434
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 2), parent = (0, 1), action = up, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 7, cumulative_reward = 0.531441
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 1)
+select myself: state = (0, 2)
+expand!!!
+create state = (0, 1), parent = (0, 2), action = down, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 21, cumulative_reward = -0.12157665459056935
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 28, cumulative_reward = 0.058149737003040096
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 17, cumulative_reward = 0.18530201888518416
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+create state = (0, 2), parent = (0, 1), action = right, reward = 0.0
+select myself: state = (0, 2)
+expand!!!
+create state = (0, 2), parent = (0, 2), action = left, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 60, cumulative_reward = 0.0019966781110160375
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 12, cumulative_reward = 0.31381059609000006
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+create state = (1, 0), parent = (0, 0), action = down, reward = 0.0
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = up, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 12, cumulative_reward = -0.31381059609000006
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 0), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 101, cumulative_reward = 2.6561398887587544e-05
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 25, cumulative_reward = 0.07976644307687256
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select child: action = right£¬ from state = (0, 1)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = right, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 10, cumulative_reward = 0.3874204890000001
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select child: action = right£¬ from state = (0, 1)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 16, cumulative_reward = 0.20589113209464907
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 0), parent = (0, 1), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 130, cumulative_reward = -1.2510760713943066e-06
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 19, cumulative_reward = 0.15009463529699918
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+create state = (0, 0), parent = (0, 0), action = up, reward = 0.0
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 117, cumulative_reward = -4.921880838284657e-06
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+create state = (1, 0), parent = (0, 0), action = up, reward = 0.0
+select myself: state = (1, 0)
+expand!!!
+create state = (0, 0), parent = (1, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 57, cumulative_reward = -0.002738927449953412
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+create state = (0, 0), parent = (0, 0), action = up, reward = 0.0
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 40, cumulative_reward = -0.016423203268260675
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 0), parent = (0, 1), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 38, cumulative_reward = -0.020275559590445275
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 12, cumulative_reward = -0.31381059609000006
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 13, cumulative_reward = -0.2824295364810001
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+create state = (0, 0), parent = (0, 0), action = up, reward = 0.0
+select myself: state = (0, 0)
+expand!!!
+create state = (1, 0), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 6, cumulative_reward = -0.5904900000000001
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 1), parent = (0, 0), action = right, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 18, cumulative_reward = 0.16677181699666577
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 0), parent = (0, 1), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 72, cumulative_reward = -0.0005639208733960184
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (1, 0), parent = (1, 0), action = down, reward = 0.0
+simulate: start at = (1, 0)
+simulate end: depth = 60, cumulative_reward = -0.0019966781110160375
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 2), parent = (0, 1), action = up, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 33, cumulative_reward = -0.03433683820292515
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 2), parent = (0, 1), action = left, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 55, cumulative_reward = -0.0033813919135227306
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 2), parent = (0, 1), action = up, reward = 0.0
+simulate: start at = (0, 2)
+simulate end: depth = 16, cumulative_reward = -0.20589113209464907
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 1), parent = (0, 1), action = up, reward = 0.0
+simulate: start at = (0, 1)
+simulate end: depth = 20, cumulative_reward = -0.13508517176729928
+===========================================
+
+
+select child: action = left£¬ from state = (0, 0)
+select child: action = up£¬ from state = (0, 0)
+select myself: state = (0, 1)
+expand!!!
+create state = (0, 0), parent = (0, 1), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 14, cumulative_reward = -0.2541865828329001
+===========================================
+
+
+select child: action = down£¬ from state = (0, 0)
+select myself: state = (1, 0)
+expand!!!
+create state = (2, 0), parent = (1, 0), action = right, reward = 0.0
+simulate: start at = (2, 0)
+simulate end: depth = 5, cumulative_reward = -0.6561
+===========================================
+
+
+select child: action = right£¬ from state = (0, 0)
+select child: action = left£¬ from state = (1, 0)
+create state = (0, 0), parent = (1, 0), action = left, reward = 0.0
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = left, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 13, cumulative_reward = -0.2824295364810001
+===========================================
+
+
+select child: action = up£¬ from state = (0, 0)
+select child: action = right£¬ from state = (0, 1)
+select child: action = right£¬ from state = (0, 1)
+create state = (0, 0), parent = (0, 1), action = right, reward = 0.0
+select myself: state = (0, 0)
+expand!!!
+create state = (0, 0), parent = (0, 0), action = down, reward = 0.0
+simulate: start at = (0, 0)
+simulate end: depth = 26, cumulative_reward = 0.0717897987691853
+===========================================
+
+

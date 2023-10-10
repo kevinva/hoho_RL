@@ -103,6 +103,10 @@ class MCTS:
     """ Simulate until a terminal state """
 
     def simulate(self, node):
+        # simulate的意义只在于获得cumulative_reward?! 
+        ### 注意： simulate过程中不需要expand
+        print(f"simulate: start at = {node.state}")
+              
         state = node.state
         cumulative_reward = 0.0
         depth = 0
@@ -118,5 +122,8 @@ class MCTS:
             depth += 1
 
             state = next_state
+
+        print(f"simulate end: depth = {depth}, cumulative_reward = {cumulative_reward}")
+        print("===========================================\n\n")
 
         return cumulative_reward

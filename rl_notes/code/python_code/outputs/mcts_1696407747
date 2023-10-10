@@ -1,0 +1,170 @@
+digraph G {
+	0 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	0 -> right0 [label=right]
+	0 -> up0 [label=up]
+	0 -> down0 [label=down]
+	0 -> left0 [label=left]
+	right0 [label=right0 shape=point style=filled width=0.25]
+	right0 -> 1 [label=0.1]
+	right0 [label=right0 shape=point style=filled width=0.25]
+	right0 -> 5 [label=0.8]
+	right0 [label=right0 shape=point style=filled width=0.25]
+	right0 -> 13 [label=0.1]
+	1 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	1 -> right1 [label=right]
+	right1 [label=right1 shape=point style=filled width=0.25]
+	right1 -> 29 [label=0.8]
+	29 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	5 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	5 -> left5 [label=left]
+	5 -> right5 [label=right]
+	5 -> up5 [label=up]
+	left5 [label=left5 shape=point style=filled width=0.25]
+	left5 -> 6 [label=0.2]
+	6 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	right5 [label=right5 shape=point style=filled width=0.25]
+	right5 -> 18 [label=0.8]
+	18 [label="V(2, 0) =
+0.00\nN = 0" fixedsize=True height=1 width=1]
+	up5 [label=up5 shape=point style=filled width=0.25]
+	up5 -> 24 [label=0.8]
+	24 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	13 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	13 -> down13 [label=down]
+	down13 [label=down13 shape=point style=filled width=0.25]
+	down13 -> 14 [label=0.8]
+	14 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	up0 [label=up0 shape=point style=filled width=0.25]
+	up0 -> 2 [label=0.1]
+	up0 [label=up0 shape=point style=filled width=0.25]
+	up0 -> 7 [label=0.8]
+	2 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	2 -> right2 [label=right]
+	2 -> left2 [label=left]
+	right2 [label=right2 shape=point style=filled width=0.25]
+	right2 -> 11 [label=0.2]
+	11 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	left2 [label=left2 shape=point style=filled width=0.25]
+	left2 -> 16 [label=0.8]
+	16 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	7 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	7 -> right7 [label=right]
+	7 -> left7 [label=left]
+	7 -> up7 [label=up]
+	7 -> down7 [label=down]
+	right7 [label=right7 shape=point style=filled width=0.25]
+	right7 -> 8 [label=0.8]
+	right7 [label=right7 shape=point style=filled width=0.25]
+	right7 -> 31 [label=0.1]
+	8 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	8 -> up8 [label=up]
+	up8 [label=up8 shape=point style=filled width=0.25]
+	up8 -> 34 [label=0.8]
+	34 [label="V(0, 2) =
+0.00\nN = 1" fixedsize=True height=1 width=1]
+	31 [label="V(0, 2) =
+0.00\nN = 1" fixedsize=True height=1 width=1]
+	31 -> right31 [label=right]
+	right31 [label=right31 shape=point style=filled width=0.25]
+	right31 -> 32 [label=0.8]
+	32 [label="V(1, 2) =
+0.00\nN = 0" fixedsize=True height=1 width=1]
+	left7 [label=left7 shape=point style=filled width=0.25]
+	left7 -> 19 [label=0.1]
+	19 [label="V(0, 2) =
+0.00\nN = 1" fixedsize=True height=1 width=1]
+	up7 [label=up7 shape=point style=filled width=0.25]
+	up7 -> 22 [label=0.2]
+	22 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	down7 [label=down7 shape=point style=filled width=0.25]
+	down7 -> 25 [label=0.2]
+	25 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	down0 [label=down0 shape=point style=filled width=0.25]
+	down0 -> 3 [label=0.9]
+	3 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	3 -> left3 [label=left]
+	3 -> up3 [label=up]
+	3 -> right3 [label=right]
+	3 -> down3 [label=down]
+	left3 [label=left3 shape=point style=filled width=0.25]
+	left3 -> 9 [label=0.9]
+	9 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	9 -> up9 [label=up]
+	9 -> left9 [label=left]
+	9 -> down9 [label=down]
+	9 -> right9 [label=right]
+	up9 [label=up9 shape=point style=filled width=0.25]
+	up9 -> 23 [label=0.8]
+	23 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	left9 [label=left9 shape=point style=filled width=0.25]
+	left9 -> 26 [label=0.9]
+	26 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	down9 [label=down9 shape=point style=filled width=0.25]
+	down9 -> 30 [label=0.9]
+	30 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	right9 [label=right9 shape=point style=filled width=0.25]
+	right9 -> 33 [label=0.8]
+	33 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	up3 [label=up3 shape=point style=filled width=0.25]
+	up3 -> 12 [label=0.8]
+	12 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	12 -> up12 [label=up]
+	up12 [label=up12 shape=point style=filled width=0.25]
+	up12 -> 27 [label=0.8]
+	27 [label="V(0, 2) =
+0.00\nN = 1" fixedsize=True height=1 width=1]
+	right3 [label=right3 shape=point style=filled width=0.25]
+	right3 -> 17 [label=0.8]
+	17 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	down3 [label=down3 shape=point style=filled width=0.25]
+	down3 -> 20 [label=0.9]
+	20 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	left0 [label=left0 shape=point style=filled width=0.25]
+	left0 -> 4 [label=0.9]
+	4 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	4 -> right4 [label=right]
+	4 -> up4 [label=up]
+	4 -> left4 [label=left]
+	4 -> down4 [label=down]
+	right4 [label=right4 shape=point style=filled width=0.25]
+	right4 -> 10 [label=0.8]
+	10 [label="V(1, 0) =
+0.00\nN = 5" fixedsize=True height=1 width=1]
+	up4 [label=up4 shape=point style=filled width=0.25]
+	up4 -> 15 [label=0.8]
+	15 [label="V(0, 1) =
+0.17\nN = 9" fixedsize=True height=1 width=1]
+	left4 [label=left4 shape=point style=filled width=0.25]
+	left4 -> 21 [label=0.9]
+	21 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+	down4 [label=down4 shape=point style=filled width=0.25]
+	down4 -> 28 [label=0.9]
+	28 [label="V(0, 0) =
+0.08\nN = 48" fixedsize=True height=1 width=1]
+}

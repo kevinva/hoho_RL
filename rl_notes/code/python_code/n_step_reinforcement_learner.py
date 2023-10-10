@@ -55,7 +55,7 @@ class NStepReinforcementLearner:
                     )
 
                     rewards = rewards[1 : self.n + 1]
-                    states = states[1 : self.n + 1]
+                    states = states[1 : self.n + 1]  # 注意：这里不会产生数组越界问题，随着迭代进行，states会不断过滤掉第一个元素
                     actions = actions[1 : self.n + 1]
 
                 state = next_state
