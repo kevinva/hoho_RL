@@ -23,3 +23,15 @@ class LinearQFunction(QFunction):
         for i in range(len(feature_values)):
             q_value += feature_values[i] * self.weights[i]
         return q_value
+
+
+
+if __name__ == "__main__":
+    w = [0.0 for _ in range(0, 4) for _ in range(0, 6)]
+    print(w)
+
+    #### 等价于：
+    # for _ in range(0, 4):
+    #     for _ in range(0, 6):
+    #         w.append(0.0)
+    

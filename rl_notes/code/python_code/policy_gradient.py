@@ -52,3 +52,10 @@ class PolicyGradient:
                 * discounted_future_rewards[t]
             ]
         return deltas
+
+
+
+if __name__ == "__main__":
+    T = 10
+    for t in reversed(range(0, T - 1)):
+        print(f"t = {t}")

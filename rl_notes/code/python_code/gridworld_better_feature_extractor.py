@@ -34,3 +34,18 @@ class GridWorldBetterFeatureExtractor(FeatureExtractor):
                 for _ in range(0, self.num_features()):
                     feature_values += [0.0]
         return feature_values
+
+
+if __name__ == "__main__":
+    from gridworld import GridWorld
+    from qlearning import QLearning
+    from linear_qfunction import LinearQFunction
+    from multi_armed_bandit.epsilon_greedy import EpsilonGreedy
+
+    mdp = GridWorld()
+    features = GridWorldBetterFeatureExtractor(mdp)
+    qfunction = LinearQFunction(features)
+    QLearning(mdp, EpsilonGreedy(), qfunction).execute()
+    policy = qfunction.extract_policy(mdp)
+    mdp.visualise_q_function(qfunction)
+    mdp.visualise_policy(policy)

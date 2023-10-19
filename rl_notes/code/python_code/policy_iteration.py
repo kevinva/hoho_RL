@@ -39,6 +39,8 @@ class PolicyIteration:
                 old_action = self.policy.select_action(state)
 
                 q_values = QTable()
+
+                # 每个状态下的所有action都要参与计算
                 for action in self.mdp.get_actions(state):
                     # Calculate the value of Q(s,a)
                     new_value = values.get_q_value(self.mdp, state, action)
@@ -56,3 +58,13 @@ class PolicyIteration:
                 return i
 
         return max_iterations
+
+
+if __name__ == "__main__":
+    from gridworld import GridWorld
+    from tabular_policy import TabularPolicy
+
+    gridworld = GridWorld()
+    policy = TabularPolicy(default_action=gridworld.LEFT)
+    PolicyIteration(gridworld, policy).policy_iteration(max_iterations=100)
+    gridworld.visualise_policy(policy)

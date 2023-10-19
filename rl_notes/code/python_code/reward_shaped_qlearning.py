@@ -14,3 +14,21 @@ class RewardShapedQLearning(QLearning):
         potential = self.mdp.discount_factor * next_state_potential - state_potential
         delta = reward + potential + self.mdp.discount_factor * next_state_value - q_value
         return delta
+
+
+if __name__ == "__main__":
+    from gridworld import GridWorld
+    from qtable import QTable
+    from qlearning import QLearning
+    from gridworld_potential_function import GridWorldPotentialFunction
+    from multi_armed_bandit.epsilon_greedy import EpsilonGreedy
+
+    mdp = GridWorld(width = 15, height = 12, goals = [((14,11), 1), ((13,11), -1)])
+    qfunction = QTable()
+    potential = GridWorldPotentialFunction(mdp)
+    # RewardShapedQLearning(mdp, EpsilonGreedy(), potential, qfunction).execute()
+    QLearning(mdp, EpsilonGreedy(), qfunction).execute()  # 不使用reward shaping
+    policy = qfunction.extract_policy(mdp)
+    mdp.visualise_q_function(qfunction)
+    mdp.visualise_policy(policy)
+    reward_shaped_rewards = mdp.get_rewards()
